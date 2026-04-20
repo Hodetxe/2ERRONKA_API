@@ -24,7 +24,9 @@ namespace _1Erronka_API.Testak
 
         private ProduktuakController CreateController(Mock<_1Erronka_API.Repositorioak.ProduktuaRepository> repoMock)
         {
-            return new ProduktuakController(repoMock.Object);
+            var poRepoMock = new Mock<_1Erronka_API.Repositorioak.ProduktuaOsagaiaRepository>(_dummyFactory);
+            var osagaiaRepoMock = new Mock<_1Erronka_API.Repositorioak.OsagaiaRepository>(_dummyFactory);
+            return new ProduktuakController(repoMock.Object, poRepoMock.Object, osagaiaRepoMock.Object);
         }
 
         [Fact]

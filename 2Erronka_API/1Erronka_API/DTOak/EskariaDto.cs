@@ -33,6 +33,11 @@ namespace _1Erronka_API.DTOak
         public int MahaiaZenbakia { get; set; }
 
         /// <summary>
+        /// Erreserbaren data eta ordua.
+        /// </summary>
+        public DateTime EgunaOrdua { get; set; }
+
+        /// <summary>
         /// Eskarian dauden produktuen zerrenda.
         /// </summary>
         public List<EskariaProduktuaDto> Produktuak { get; set; } = new();

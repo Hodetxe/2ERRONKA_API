@@ -31,6 +31,22 @@ namespace _1Erronka_API.DTOak
         public int Stock { get; set; }
     }
 
+    public class ProduktuOsagaiaBerriaDto
+    {
+        public int OsagaiaId { get; set; }
+        public double Kantitatea { get; set; }
+        public string Unitatea { get; set; } = "unit";
+    }
+
+    public class ProduktuOsagaiaErantzunDto
+    {
+        public int ProduktuaId { get; set; }
+        public int OsagaiaId { get; set; }
+        public string Izena { get; set; } = string.Empty;
+        public double Kantitatea { get; set; }
+        public string Unitatea { get; set; } = "unit";
+    }
+
     /// <summary>
     /// Osagai baten informazioa gordetzeko DTOa.
     /// </summary>

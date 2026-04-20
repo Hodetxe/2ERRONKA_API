@@ -20,7 +20,17 @@ namespace _1Erronka_API.Repositorioak
 
         public virtual void Update(Osagaia osagaia)
         {
+            using var tx = _session.BeginTransaction();
             _session.Update(osagaia);
+            tx.Commit();
+        }
+
+        public virtual void UpdateStock(int id, int stock)
+        {
+            using var tx = _session.BeginTransaction();
+            var o = _session.Get<Osagaia>(id);
+            if (o != null) { o.Stock = stock; _session.Update(o); }
+            tx.Commit();
         }
     }
 }

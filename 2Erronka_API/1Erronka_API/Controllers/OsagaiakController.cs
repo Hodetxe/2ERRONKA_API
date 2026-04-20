@@ -61,5 +61,15 @@ namespace _1Erronka_API.Controllers
 
             return Ok(dto);
         }
+
+        [HttpPut("{id}/stock")]
+        public IActionResult UpdateStock(int id, [FromBody] Dictionary<string, int> body)
+        {
+            if (!body.TryGetValue("stock", out int stock)) return BadRequest();
+            var osagaia = _repo.Get(id);
+            if (osagaia == null) return NotFound();
+            _repo.UpdateStock(id, stock);
+            return NoContent();
+        }
     }
 }

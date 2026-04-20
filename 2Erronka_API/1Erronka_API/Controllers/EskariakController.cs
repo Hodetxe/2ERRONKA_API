@@ -363,9 +363,8 @@ namespace _1Erronka_API.Controllers
                 Prezioa = e.Prezioa,
                 Egoera = e.Egoera,
                 ErreserbaId = e.Erreserba.Id,
-
                 MahaiaZenbakia = e.Erreserba.Mahaia.Zenbakia,
-
+                EgunaOrdua = e.Erreserba.EgunaOrdua,
                 Produktuak = e.Produktuak.Select(p => new EskariaProduktuaDto
                 {
                     ProduktuaId = p.Produktua.Id,
