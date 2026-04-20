@@ -8,6 +8,12 @@ using System.Text.Json.Serialization;
 
     var builder = WebApplication.CreateBuilder(args);
 
+    var aspnetcoreUrls = Environment.GetEnvironmentVariable("ASPNETCORE_URLS");
+    if (string.IsNullOrWhiteSpace(aspnetcoreUrls))
+    {
+        builder.WebHost.UseUrls("http://0.0.0.0:5000");
+    }
+
     // Add services to the container.
 
     // CORS konfigurazioa gehitu => Web-etik errorea ez emateko
