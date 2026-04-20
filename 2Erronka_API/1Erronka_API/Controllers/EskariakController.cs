@@ -37,6 +37,7 @@ namespace _1Erronka_API.Controllers
         public IActionResult Sortu([FromBody] EskariaSortuDto dto)
         {
             object erantzuna = null;
+            string? logMezua = null;
 
             try
             {
@@ -105,6 +106,9 @@ namespace _1Erronka_API.Controllers
                     eskaria.Prezioa = eskaria.Produktuak.Sum(p => p.Prezioa * p.Kantitatea);
                     _repo.Add(eskaria);
 
+                    logMezua =
+                        $"Eskaria sortu da | EskariaId={eskaria.Id} | ErreserbaId={erreserba.Id} | LangileaId={erreserba.Langilea.Id} ({erreserba.Langilea.Izena}) | MahaiaId={erreserba.Mahaia.Id} (Zenbakia={erreserba.Mahaia.Zenbakia}) | Egoera={eskaria.Egoera} | PrezioaTotala={eskaria.Prezioa:0.00} | Produktuak=[{string.Join("; ", eskaria.Produktuak.Select(p => $"{p.Produktua.Id}:{p.Produktua.Izena} x{p.Kantitatea} @ {p.Prezioa:0.00}"))}]";
+
                     erantzuna = new
                     {
                         EskariaId = eskaria.Id,
@@ -122,6 +126,11 @@ namespace _1Erronka_API.Controllers
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
+            }
+
+            if (!string.IsNullOrWhiteSpace(logMezua))
+            {
+                new LogService().LogaSortu(logMezua);
             }
 
             return Ok(erantzuna);
