@@ -3,59 +3,58 @@ using _1Erronka_API.Modeloak;
 
 namespace _1Erronka_API.Repositorioak
 {
-    public class OsagaiaRepository
+    public class RolaRepository
     {
         private readonly NHibernate.ISession _session;
 
-        public OsagaiaRepository(NHibernate.ISessionFactory sessionFactory)
+        public RolaRepository(ISessionFactory sessionFactory)
         {
             _session = sessionFactory.GetCurrentSession();
         }
 
+        public virtual Rola? Get(int id) =>
+            _session.Query<Rola>().FirstOrDefault(x => x.Id == id);
 
-        public virtual Osagaia? Get(int id) =>
-            _session.Query<Osagaia>().FirstOrDefault(x => x.Id == id);
+        public virtual IList<Rola> GetAll() => _session.Query<Rola>().ToList();
 
-        public virtual IList<Osagaia> GetAll() => _session.Query<Osagaia>().ToList();
-
-        public virtual void Add(Osagaia osagaia)
+        public virtual void Add(Rola rola)
         {
             if (_session.Transaction != null && _session.Transaction.IsActive)
             {
-                _session.Save(osagaia);
+                _session.Save(rola);
             }
             else
             {
                 using var tx = _session.BeginTransaction();
-                _session.Save(osagaia);
+                _session.Save(rola);
                 tx.Commit();
             }
         }
 
-        public virtual void Update(Osagaia osagaia)
+        public virtual void Update(Rola rola)
         {
             if (_session.Transaction != null && _session.Transaction.IsActive)
             {
-                _session.Update(osagaia);
+                _session.Update(rola);
             }
             else
             {
                 using var tx = _session.BeginTransaction();
-                _session.Update(osagaia);
+                _session.Update(rola);
                 tx.Commit();
             }
         }
 
-        public virtual void Delete(Osagaia osagaia)
+        public virtual void Delete(Rola rola)
         {
             if (_session.Transaction != null && _session.Transaction.IsActive)
             {
-                _session.Delete(osagaia);
+                _session.Delete(rola);
             }
             else
             {
                 using var tx = _session.BeginTransaction();
-                _session.Delete(osagaia);
+                _session.Delete(rola);
                 tx.Commit();
             }
         }
