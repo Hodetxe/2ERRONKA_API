@@ -12,7 +12,7 @@ public class LogService
             using (StreamWriter sw = new StreamWriter(rutaArchivo, true))
             {
                 string hora = DateTime.Now.ToString("HH:mm:ss");
-                sw.WriteLine($"[{hora}] Se ha ejecutado {mensaje}");
+                sw.WriteLine($"[{hora}] {mensaje}");
             }
         }
         catch (Exception ex)

@@ -98,6 +98,137 @@ namespace _1Erronka_API.Testak
         }
 
         [Fact]
+        public void Sortu_ProduktuStockGutxiDenean_KantitateaMurriztuEtaOkItzuli()
+        {
+            var repoMock = new Mock<_1Erronka_API.Repositorioak.EskariaRepository>(MockBehavior.Strict, _dummyFactory);
+            repoMock.Setup(r => r.ExecuteSerializableTransaction(It.IsAny<Action>())).Callback<Action>(a => a());
+            repoMock.Setup(r => r.Add(It.IsAny<Eskaria>()));
+
+            var erreserba = new Erreserba { Id = 1, Langilea = new Langilea { Id = 1, Izena = "L" }, Mahaia = new Mahaia { Id = 1 } };
+            var erreserbaMock = new Mock<_1Erronka_API.Repositorioak.ErreserbaRepository>(MockBehavior.Strict, _dummyFactory);
+            erreserbaMock.Setup(r => r.Get(1)).Returns(erreserba);
+
+            var produktua = new Produktua { Id = 10, Izena = "P", Prezioa = 5.0, Stock = 1 };
+            var produktuaMock = new Mock<_1Erronka_API.Repositorioak.ProduktuaRepository>(MockBehavior.Strict, _dummyFactory);
+            produktuaMock.Setup(p => p.Get(10)).Returns(produktua);
+            produktuaMock.Setup(p => p.Update(It.IsAny<Produktua>()));
+
+            var osagaia = new Osagaia { Id = 100, Izena = "O", Stock = 100 };
+            var produktuOsagaiaMock = new Mock<_1Erronka_API.Repositorioak.ProduktuaOsagaiaRepository>(MockBehavior.Strict, _dummyFactory);
+            produktuOsagaiaMock.Setup(p => p.GetByProduktuaId(10)).Returns(new List<ProduktuaOsagaia>
+            {
+                new ProduktuaOsagaia { Produktua = produktua, Osagaia = osagaia, Kantitatea = 1 }
+            });
+            var osagaiaMock = new Mock<_1Erronka_API.Repositorioak.OsagaiaRepository>(MockBehavior.Strict, _dummyFactory);
+            osagaiaMock.Setup(o => o.Update(It.IsAny<Osagaia>()));
+
+            var controller = CreateController(repoMock, produktuaMock, erreserbaMock, produktuOsagaiaMock, osagaiaMock);
+
+            var dto = new EskariaSortuDto
+            {
+                ErreserbaId = 1,
+                Produktuak = new List<EskariaProduktuaSortuDto>
+                {
+                    new EskariaProduktuaSortuDto { ProduktuaId = 10, Kantitatea = 2, Prezioa = 5.0 }
+                }
+            };
+
+            var result = controller.Sortu(dto);
+
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            dynamic body = okResult.Value!;
+            var produktuak = (IEnumerable<object>)body.Produktuak;
+            Assert.Single(produktuak);
+            Assert.Equal(1, ((dynamic)produktuak.First()).Kantitatea);
+            Assert.Equal(0, produktua.Stock);
+            Assert.Equal(99, osagaia.Stock);
+        }
+
+        [Fact]
+        public void Sortu_OsagaiStockGutxiDenean_KantitateaMurriztuEtaOkItzuli()
+        {
+            var repoMock = new Mock<_1Erronka_API.Repositorioak.EskariaRepository>(MockBehavior.Strict, _dummyFactory);
+            repoMock.Setup(r => r.ExecuteSerializableTransaction(It.IsAny<Action>())).Callback<Action>(a => a());
+            repoMock.Setup(r => r.Add(It.IsAny<Eskaria>()));
+
+            var erreserba = new Erreserba { Id = 1, Langilea = new Langilea { Id = 1, Izena = "L" }, Mahaia = new Mahaia { Id = 1 } };
+            var erreserbaMock = new Mock<_1Erronka_API.Repositorioak.ErreserbaRepository>(MockBehavior.Strict, _dummyFactory);
+            erreserbaMock.Setup(r => r.Get(1)).Returns(erreserba);
+
+            var produktua = new Produktua { Id = 10, Izena = "P", Prezioa = 5.0, Stock = 10 };
+            var produktuaMock = new Mock<_1Erronka_API.Repositorioak.ProduktuaRepository>(MockBehavior.Strict, _dummyFactory);
+            produktuaMock.Setup(p => p.Get(10)).Returns(produktua);
+            produktuaMock.Setup(p => p.Update(It.IsAny<Produktua>()));
+
+            var osagaia = new Osagaia { Id = 100, Izena = "O", Stock = 1 };
+            var produktuOsagaiaMock = new Mock<_1Erronka_API.Repositorioak.ProduktuaOsagaiaRepository>(MockBehavior.Strict, _dummyFactory);
+            produktuOsagaiaMock.Setup(p => p.GetByProduktuaId(10)).Returns(new List<ProduktuaOsagaia>
+            {
+                new ProduktuaOsagaia { Produktua = produktua, Osagaia = osagaia, Kantitatea = 1 }
+            });
+            var osagaiaMock = new Mock<_1Erronka_API.Repositorioak.OsagaiaRepository>(MockBehavior.Strict, _dummyFactory);
+            osagaiaMock.Setup(o => o.Update(It.IsAny<Osagaia>()));
+
+            var controller = CreateController(repoMock, produktuaMock, erreserbaMock, produktuOsagaiaMock, osagaiaMock);
+
+            var dto = new EskariaSortuDto
+            {
+                ErreserbaId = 1,
+                Produktuak = new List<EskariaProduktuaSortuDto>
+                {
+                    new EskariaProduktuaSortuDto { ProduktuaId = 10, Kantitatea = 2, Prezioa = 5.0 }
+                }
+            };
+
+            var result = controller.Sortu(dto);
+
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            dynamic body = okResult.Value!;
+            var produktuak = (IEnumerable<object>)body.Produktuak;
+            Assert.Single(produktuak);
+            Assert.Equal(1, ((dynamic)produktuak.First()).Kantitatea);
+            Assert.Equal(9, produktua.Stock);
+            Assert.Equal(0, osagaia.Stock);
+        }
+
+        [Fact]
+        public void Sortu_OsagaiakEzDueneanStockik_BadRequestOsagaiMezuarekin()
+        {
+            var repoMock = new Mock<_1Erronka_API.Repositorioak.EskariaRepository>(MockBehavior.Strict, _dummyFactory);
+            repoMock.Setup(r => r.ExecuteSerializableTransaction(It.IsAny<Action>())).Callback<Action>(a => a());
+
+            var erreserba = new Erreserba { Id = 1, Langilea = new Langilea { Id = 1, Izena = "L" }, Mahaia = new Mahaia { Id = 1 } };
+            var erreserbaMock = new Mock<_1Erronka_API.Repositorioak.ErreserbaRepository>(MockBehavior.Strict, _dummyFactory);
+            erreserbaMock.Setup(r => r.Get(1)).Returns(erreserba);
+
+            var produktua = new Produktua { Id = 10, Izena = "P", Prezioa = 5.0, Stock = 2 };
+            var produktuaMock = new Mock<_1Erronka_API.Repositorioak.ProduktuaRepository>(MockBehavior.Strict, _dummyFactory);
+            produktuaMock.Setup(p => p.Get(10)).Returns(produktua);
+
+            var osagaia = new Osagaia { Id = 100, Izena = "O", Stock = 0 };
+            var produktuOsagaiaMock = new Mock<_1Erronka_API.Repositorioak.ProduktuaOsagaiaRepository>(MockBehavior.Strict, _dummyFactory);
+            produktuOsagaiaMock.Setup(p => p.GetByProduktuaId(10)).Returns(new List<ProduktuaOsagaia>
+            {
+                new ProduktuaOsagaia { Produktua = produktua, Osagaia = osagaia, Kantitatea = 1 }
+            });
+
+            var controller = CreateController(repoMock, produktuaMock, erreserbaMock, produktuOsagaiaMock);
+            var dto = new EskariaSortuDto
+            {
+                ErreserbaId = 1,
+                Produktuak = new List<EskariaProduktuaSortuDto>
+                {
+                    new EskariaProduktuaSortuDto { ProduktuaId = 10, Kantitatea = 1, Prezioa = 5.0 }
+                }
+            };
+
+            var result = controller.Sortu(dto);
+
+            var badResult = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Contains("Ez dago nahikoa stock 'O' osagaian", badResult.Value!.ToString());
+        }
+
+        [Fact]
         public void Sortu_ErreserbaEzExistitzean_BadRequestItzuli()
         {
             // Arrange

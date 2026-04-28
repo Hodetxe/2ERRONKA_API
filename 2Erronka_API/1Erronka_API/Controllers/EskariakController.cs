@@ -66,21 +66,28 @@ namespace _1Erronka_API.Controllers
                         if (produktua.Stock <= 0)
                             throw new Exception($"Ez dago stock-ik '{produktua.Izena}' produktuan.");
 
-                        if (produktua.Stock < p.Kantitatea)
-                        {
-                            p.Kantitatea = produktua.Stock;
-                        }
-
                         var osagaiak = _produktuaOsagaiaRepo.GetByProduktuaId(produktua.Id);
 
+                        var maxKantitatea = produktua.Stock;
                         foreach (var po in osagaiak)
                         {
-                            var osagaia = po.Osagaia;
-                            var kantitateaTotala = po.Kantitatea * p.Kantitatea;
-
-                            if (osagaia.Stock < kantitateaTotala)
-                                throw new Exception($"Ez dago nahikoa stock '{osagaia.Izena}' osagaian");
+                            if (po.Kantitatea <= 0) continue;
+                            var m = po.Osagaia.Stock / po.Kantitatea;
+                            if (m < maxKantitatea) maxKantitatea = m;
                         }
+
+                        var kantitateaErabili = p.Kantitatea;
+                        if (kantitateaErabili > maxKantitatea) kantitateaErabili = maxKantitatea;
+                        if (kantitateaErabili <= 0)
+                        {
+                            var osagaiArazoa = osagaiak.FirstOrDefault(po => po.Kantitatea > 0 && po.Osagaia.Stock < po.Kantitatea);
+                            if (osagaiArazoa != null)
+                                throw new Exception($"Ez dago nahikoa stock '{osagaiArazoa.Osagaia.Izena}' osagaian");
+
+                            throw new Exception($"Ez dago stock-ik '{produktua.Izena}' produktuan.");
+                        }
+
+                        p.Kantitatea = kantitateaErabili;
 
                         foreach (var po in osagaiak)
                         {
