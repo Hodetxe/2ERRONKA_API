@@ -2,7 +2,7 @@ using System;
 using System.IO;
 public class LogService
 {
-    public void LogaSortu(string mensaje)
+    public void LogaSortu(string mezua)
     {
         string directorioApp = AppDomain.CurrentDomain.BaseDirectory;
         string rutaArchivo = Path.Combine(directorioApp, "logTpv.txt");
@@ -12,12 +12,12 @@ public class LogService
             using (StreamWriter sw = new StreamWriter(rutaArchivo, true))
             {
                 string hora = DateTime.Now.ToString("HH:mm:ss");
-                sw.WriteLine($"[{hora}] {mensaje}");
+                sw.WriteLine($"[{hora}] {mezua}");
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error crítico al escribir el log: {ex.Message}");
+            Console.WriteLine($"Errore larria loga idaztean: {ex.Message}");
         }
     }
 }

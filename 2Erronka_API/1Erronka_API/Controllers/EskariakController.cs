@@ -51,7 +51,12 @@ namespace _1Erronka_API.Controllers
                     var eskaria = new Eskaria
                     {
                         Erreserba = erreserba,
-                        Prezioa = dto.Prezioa,
+                        Prezioa = 0,
+                        GuztiraBruto = 0,
+                        DeskontuKopurua = 0,
+                        DeskontuKodea = null,
+                        DeskontuMota = null,
+                        DeskontuBalioa = null,
                         Egoera = dto.Egoera,
                         Langilea = erreserba.Langilea,
                         Mahaia = erreserba.Mahaia,
@@ -110,7 +115,19 @@ namespace _1Erronka_API.Controllers
                         });
                     }
 
-                    eskaria.Prezioa = eskaria.Produktuak.Sum(p => p.Prezioa * p.Kantitatea);
+                    var guztiraBruto = Math.Round(eskaria.Produktuak.Sum(p => p.Prezioa * p.Kantitatea), 2, MidpointRounding.AwayFromZero);
+                    var deskontuKopurua = Math.Round(Math.Max(dto.DeskontuKopurua, 0), 2, MidpointRounding.AwayFromZero);
+                    if (deskontuKopurua > guztiraBruto)
+                        deskontuKopurua = guztiraBruto;
+
+                    var deskKodea = string.IsNullOrWhiteSpace(dto.DeskontuKodea) ? null : dto.DeskontuKodea.Trim();
+
+                    eskaria.GuztiraBruto = guztiraBruto;
+                    eskaria.DeskontuKopurua = deskontuKopurua;
+                    eskaria.DeskontuKodea = deskKodea;
+                    eskaria.DeskontuMota = string.IsNullOrWhiteSpace(dto.DeskontuMota) ? null : dto.DeskontuMota.Trim();
+                    eskaria.DeskontuBalioa = dto.DeskontuBalioa;
+                    eskaria.Prezioa = Math.Round(Math.Max(guztiraBruto - deskontuKopurua, 0), 2, MidpointRounding.AwayFromZero);
                     _repo.Add(eskaria);
 
                     logMezua =
@@ -119,7 +136,9 @@ namespace _1Erronka_API.Controllers
                     erantzuna = new
                     {
                         EskariaId = eskaria.Id,
-                        PrezioaTotala = eskaria.Produktuak.Sum(p => p.Prezioa * p.Kantitatea),
+                        GuztiraBruto = eskaria.GuztiraBruto,
+                        DeskontuKopurua = eskaria.DeskontuKopurua,
+                        PrezioaTotala = eskaria.Prezioa,
                         Produktuak = eskaria.Produktuak.Select(p => new
                         {
                             ProduktuaIzena = p.Produktua.Izena,
@@ -241,7 +260,18 @@ namespace _1Erronka_API.Controllers
                         }
                     }
 
-                    eskaria.Prezioa = dto.Prezioa;
+                    var guztiraBruto = Math.Round(eskaria.Produktuak.Sum(p => p.Prezioa * p.Kantitatea), 2, MidpointRounding.AwayFromZero);
+                    var deskontuKopurua = Math.Round(Math.Max(dto.DeskontuKopurua, 0), 2, MidpointRounding.AwayFromZero);
+                    if (deskontuKopurua > guztiraBruto)
+                        deskontuKopurua = guztiraBruto;
+
+                    eskaria.GuztiraBruto = guztiraBruto;
+                    eskaria.DeskontuKopurua = deskontuKopurua;
+                    var deskKodea = string.IsNullOrWhiteSpace(dto.DeskontuKodea) ? null : dto.DeskontuKodea.Trim();
+                    eskaria.DeskontuKodea = deskKodea;
+                    eskaria.DeskontuMota = string.IsNullOrWhiteSpace(dto.DeskontuMota) ? null : dto.DeskontuMota.Trim();
+                    eskaria.DeskontuBalioa = dto.DeskontuBalioa;
+                    eskaria.Prezioa = Math.Round(Math.Max(guztiraBruto - deskontuKopurua, 0), 2, MidpointRounding.AwayFromZero);
                     eskaria.Egoera = dto.Egoera;
 
                     _repo.Update(eskaria);
@@ -313,6 +343,11 @@ namespace _1Erronka_API.Controllers
             {
                 Id = eskaria.Id,
                 Prezioa = eskaria.Prezioa,
+                GuztiraBruto = eskaria.GuztiraBruto,
+                DeskontuKopurua = eskaria.DeskontuKopurua,
+                DeskontuKodea = eskaria.DeskontuKodea,
+                DeskontuMota = eskaria.DeskontuMota,
+                DeskontuBalioa = eskaria.DeskontuBalioa,
                 Egoera = eskaria.Egoera,
                 ErreserbaId = eskaria.Erreserba.Id,
                 Produktuak = eskaria.Produktuak.Select(p => new EskariaProduktuaDto
@@ -341,6 +376,11 @@ namespace _1Erronka_API.Controllers
             {
                 Id = e.Id,
                 Prezioa = e.Prezioa,
+                GuztiraBruto = e.GuztiraBruto,
+                DeskontuKopurua = e.DeskontuKopurua,
+                DeskontuKodea = e.DeskontuKodea,
+                DeskontuMota = e.DeskontuMota,
+                DeskontuBalioa = e.DeskontuBalioa,
                 Egoera = e.Egoera,
                 ErreserbaId = e.Erreserba.Id,
                 Produktuak = e.Produktuak.Select(p => new EskariaProduktuaDto
@@ -368,6 +408,11 @@ namespace _1Erronka_API.Controllers
             {
                 Id = e.Id,
                 Prezioa = e.Prezioa,
+                GuztiraBruto = e.GuztiraBruto,
+                DeskontuKopurua = e.DeskontuKopurua,
+                DeskontuKodea = e.DeskontuKodea,
+                DeskontuMota = e.DeskontuMota,
+                DeskontuBalioa = e.DeskontuBalioa,
                 Egoera = e.Egoera,
                 ErreserbaId = e.Erreserba.Id,
 
@@ -401,6 +446,11 @@ namespace _1Erronka_API.Controllers
             {
                 Id = e.Id,
                 Prezioa = e.Prezioa,
+                GuztiraBruto = e.GuztiraBruto,
+                DeskontuKopurua = e.DeskontuKopurua,
+                DeskontuKodea = e.DeskontuKodea,
+                DeskontuMota = e.DeskontuMota,
+                DeskontuBalioa = e.DeskontuBalioa,
                 Egoera = e.Egoera,
                 ErreserbaId = e.Erreserba.Id,
                 Produktuak = e.Produktuak.Select(p => new EskariaProduktuaDto

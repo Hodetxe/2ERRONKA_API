@@ -16,6 +16,11 @@ namespace _1Erronka_API.DTOak
         /// Eskariaren prezio totala.
         /// </summary>
         public double Prezioa { get; set; }
+        public double GuztiraBruto { get; set; }
+        public double DeskontuKopurua { get; set; }
+        public string? DeskontuKodea { get; set; }
+        public string? DeskontuMota { get; set; }
+        public double? DeskontuBalioa { get; set; }
 
         /// <summary>
         /// Eskariaren egoera (Adibidez: "Prestatzen", "Zerbitzatuta").
@@ -52,6 +57,11 @@ namespace _1Erronka_API.DTOak
         /// Eskariaren hasierako prezioa.
         /// </summary>
         public double Prezioa { get; set; }
+        public double GuztiraBruto { get; set; }
+        public double DeskontuKopurua { get; set; }
+        public string? DeskontuKodea { get; set; }
+        public string? DeskontuMota { get; set; }
+        public double? DeskontuBalioa { get; set; }
 
         /// <summary>
         /// Eskariaren hasierako egoera.

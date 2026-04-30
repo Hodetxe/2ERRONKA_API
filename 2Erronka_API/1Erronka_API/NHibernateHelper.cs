@@ -1,4 +1,4 @@
-﻿using FluentNHibernate.Cfg;
+using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
 using _1Erronka_API.Mapeoak;
 using _1Erronka_API.Modeloak;
@@ -25,10 +25,21 @@ namespace _1Erronka_API
             var config = Fluently.Configure()
                 .Database(MySQLConfiguration.Standard
                 //.ConnectionString("Server=192.168.10.5;Port=3306;Database=2mg3_1erronka;Uid=3Taldea;Pwd=2MG3_3Taldea3;"))
-                .ConnectionString("Server=localhost;Port=3306;Database=2erronka_defi;Uid=root;Pwd=1mg3;"))
+                .ConnectionString("Server=localhost;Port=3306;Database=2erronkab;Uid=root;Pwd=1MG2024;"))
                 .Mappings(m =>
                 {
-                    m.FluentMappings.AddFromAssembly(typeof(NHibernateHelper).Assembly);
+                    m.FluentMappings.Add<ErosketaMap>();
+                    m.FluentMappings.Add<ErreserbaMap>();
+                    m.FluentMappings.Add<EskariaMap>();
+                    m.FluentMappings.Add<EskariaProduktuaMap>();
+                    m.FluentMappings.Add<HornitzaileaMap>();
+                    m.FluentMappings.Add<LangileaMap>();
+                    m.FluentMappings.Add<MahaiaMap>();
+                    m.FluentMappings.Add<MaterialaMap>();
+                    m.FluentMappings.Add<OsagaiaMap>();
+                    m.FluentMappings.Add<ProduktuaMap>();
+                    m.FluentMappings.Add<ProduktuaOsagaiaMap>();
+                    m.FluentMappings.Add<RolaMap>();
                 })
                 .ExposeConfiguration(cfg =>
                 {
