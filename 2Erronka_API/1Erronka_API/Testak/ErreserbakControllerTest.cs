@@ -368,5 +368,41 @@ namespace _1Erronka_API.Testak
             // cleanup
             File.Delete(full);
         }
+
+        private sealed class MySqlExceptionFake : Exception
+        {
+            public int Number { get; }
+
+            public MySqlExceptionFake(int number, string message) : base(message)
+            {
+                Number = number;
+            }
+        }
+
+        private static bool IsTransient(Exception ex)
+        {
+            var m = typeof(ErreserbakController).GetMethod(
+                "IsTransientMySqlConcurrency",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!;
+            return (bool)m.Invoke(null, new object[] { ex })!;
+        }
+
+        [Fact]
+        public void IsTransientMySqlConcurrency_DeadlockNumber1213_Denean_TrueDa()
+        {
+            Assert.True(IsTransient(new MySqlExceptionFake(1213, "deadlock")));
+        }
+
+        [Fact]
+        public void IsTransientMySqlConcurrency_LockWaitTimeoutNumber1205_Denean_TrueDa()
+        {
+            Assert.True(IsTransient(new MySqlExceptionFake(1205, "timeout")));
+        }
+
+        [Fact]
+        public void IsTransientMySqlConcurrency_HibernateExceptionDeadlockMezuarekin_TrueDa()
+        {
+            Assert.True(IsTransient(new HibernateException("Deadlock found")));
+        }
     }
 }
