@@ -22,10 +22,16 @@ namespace _1Erronka_API
 
         private static ISessionFactory CreateSessionFactory()
         {
+            string server = Environment.GetEnvironmentVariable("MYSQL_HOST") ?? "localhost";
+            string port = Environment.GetEnvironmentVariable("MYSQL_PORT") ?? "3306";
+            string database = Environment.GetEnvironmentVariable("MYSQL_DATABASE") ?? "2erronkaproba";
+            string user = Environment.GetEnvironmentVariable("MYSQL_USER") ?? "root";
+            string password = Environment.GetEnvironmentVariable("MYSQL_PASSWORD") ?? "";
+            string connectionString = $"Server={server};Port={port};Database={database};Uid={user};Pwd={password};";
+
             var config = Fluently.Configure()
                 .Database(MySQLConfiguration.Standard
-                //.ConnectionString("Server=192.168.10.5;Port=3306;Database=2mg3_1erronka;Uid=3Taldea;Pwd=2MG3_3Taldea3;"))
-                .ConnectionString("Server=localhost;Port=3306;Database=2erronkab;Uid=root;Pwd=1MG2024;"))
+                .ConnectionString(connectionString))
                 .Mappings(m =>
                 {
                     m.FluentMappings.Add<ErosketaMap>();
