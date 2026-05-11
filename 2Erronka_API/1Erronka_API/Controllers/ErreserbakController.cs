@@ -189,7 +189,7 @@ namespace _1Erronka_API.Controllers
             {
                 if (!string.IsNullOrWhiteSpace(fakturaFitxategia))
                 {
-                    var path = Path.Combine(_env.WebRootPath, "tiketak", fakturaFitxategia);
+                    var path = Path.Combine(LortuWebRootPath(), "tiketak", fakturaFitxategia);
                     if (System.IO.File.Exists(path))
                     {
                         System.IO.File.Delete(path);
@@ -242,7 +242,7 @@ namespace _1Erronka_API.Controllers
             double itzulia,
             string ordainketaModua)
         {
-            string root = Path.Combine(_env.WebRootPath, "tiketak");
+            string root = Path.Combine(LortuWebRootPath(), "tiketak");
             Directory.CreateDirectory(root);
 
             var uniq = Guid.NewGuid().ToString("N")[..6];
@@ -283,6 +283,14 @@ namespace _1Erronka_API.Controllers
             }
 
             return fakturaRuta;
+        }
+
+        private string LortuWebRootPath()
+        {
+            if (!string.IsNullOrWhiteSpace(_env.WebRootPath))
+                return _env.WebRootPath;
+
+            return Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
         }
 
         private void GehituTicketEdukia(
@@ -438,12 +446,12 @@ namespace _1Erronka_API.Controllers
             var candidates = new List<string>
             {
                 Path.Combine(Directory.GetCurrentDirectory(), "storage", "tiketak", fileName),
-                Path.Combine(_env.WebRootPath, "tiketak", fileName)
+                Path.Combine(LortuWebRootPath(), "tiketak", fileName)
             };
 
             if (fakturaRuta.Contains('/'))
             {
-                candidates.Add(Path.Combine(_env.WebRootPath, fakturaRuta.TrimStart('/')));
+                candidates.Add(Path.Combine(LortuWebRootPath(), fakturaRuta.TrimStart('/')));
             }
 
             var rutaAbsoluta = candidates.FirstOrDefault(System.IO.File.Exists);

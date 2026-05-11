@@ -14,6 +14,10 @@ using System.Text.Json.Serialization;
         builder.WebHost.UseUrls("http://0.0.0.0:5000");
     }
 
+    var webRootPath = Path.Combine(builder.Environment.ContentRootPath, "wwwroot");
+    Directory.CreateDirectory(webRootPath);
+    builder.WebHost.UseWebRoot(webRootPath);
+
     // Add services to the container.
 
     // CORS konfigurazioa gehitu => Web-etik errorea ez emateko
